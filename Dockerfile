@@ -1,12 +1,21 @@
 FROM debian:latest
-MAINTAINER Tom Xiong <tomxiongzh@gmail.com>
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install packages
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server pwgen
-RUN mkdir -p /var/run/sshd && sed -i "s/UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g" /etc/ssh/sshd_config
-ADD set_root_pw.sh /set_root_pw.sh
-ADD run.sh /run.sh
+RUN apt-get update \
+  && apt-get -y --no-install-recommends install \
+    openssh-server \
+    python3 \
+    pwgen \
+  && mkdir -p /var/run/sshd \
+  && sed -i "s/UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g" /etc/ssh/sshd_config
+
+COPY set_root_pw.sh /set_root_pw.sh
+COPY run.sh /run.sh
+
 RUN chmod +x /*.sh
 
 EXPOSE 22
+
 CMD ["/run.sh"]
