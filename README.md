@@ -53,7 +53,20 @@ set the environment variable `ROOT_PASS` to your specific password when running 
 Build
 ---
 
+### For your current OS
+
 ```bash
-docker build -t kinoba/debian-python-ssh .
+docker build --tag kinoba/debian-python-ssh .
 docker push kinoba/debian-python-ssh
+```
+
+### For multiple OSes
+
+```bash
+docker buildx create universal-builder
+docker buildx use universal-builder
+docker buildx build \
+	--platform linux/amd64,linux/arm64,linux/arm/v7 \
+	--tag kinoba/debian-python-ssh --push \
+	.
 ```
